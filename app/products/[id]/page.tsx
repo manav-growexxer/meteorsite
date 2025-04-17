@@ -45,6 +45,7 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const response = await fetch(`/api/products/${id}`);
+        console.log(response);
         const data = await response.json();
         setProduct(data);
       } catch (error) {

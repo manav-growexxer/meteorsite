@@ -34,3 +34,28 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## dependencies
+
+npm install --save-dev @types/next-auth
+npm install next-auth
+npm install @stripe/stripe-js socket.io-client nodemailer cloudinary @types/nodemailer @types/cloudinary
+npm install @stripe/stripe-js socket.io-client nodemailer cloudinary @types/nodemailer
+npm install
+npm install mongoose
+npm install bcryptjs @types/bcryptjs
+npm install -D @types/mongoose
+npm install cloudinary @types/cloudinary
+npm install cloudinary
+npm install socket.io @types/socket.io
+npm install @tailwindcss/postcss
+npm install next-auth @auth/mongodb-adapter mongodb
+npm install bcrypt @types/bcrypt
+npm install stripe bcryptjs @types/bcryptjs
+npm install @stripe/stripe-js
+npm install react-icons
+npm i framer-motion
+npm i @types/canvas-confetti
+npm install -D tailwindcss@3.3.0 postcss@8.4.21 autoprefixer@10.4.14
+npm run build
+npm run dev

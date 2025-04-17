@@ -1,67 +1,80 @@
-"use client"
+"use client";
 
-import { useEffect, useState, useCallback } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { FaFilter, FaShoppingCart, FaStar, FaHeart, FaSearch, FaSort, FaTimes, FaWater } from "react-icons/fa"
+import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import {
+  FaFilter,
+  FaShoppingCart,
+  FaStar,
+  FaHeart,
+  FaSearch,
+  FaSort,
+  FaTimes,
+  FaWater,
+} from "react-icons/fa";
 
 interface Product {
-  _id: string
-  name: string
-  price: number
-  description: string
-  images: string[]
-  capacity: number
-  material: string
-  color: string
+  _id: string;
+  name: string;
+  price: number;
+  description: string;
+  images: string[];
+  capacity: number;
+  material: string;
+  color: string;
 }
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({
     capacity: "",
     material: "",
     color: "",
     priceRange: "",
-  })
-  const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState("featured")
-  const [showFilters, setShowFilters] = useState(false)
-  const [wishlist, setWishlist] = useState<string[]>([])
-  const [activeFiltersCount, setActiveFiltersCount] = useState(0)
+  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("featured");
+  const [showFilters, setShowFilters] = useState(false);
+  const [wishlist, setWishlist] = useState<string[]>([]);
+  const [activeFiltersCount, setActiveFiltersCount] = useState(0);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true)
-        const response = await fetch("/api/products")
-        const data = await response.json()
-        setProducts(data)
+        setLoading(true);
+        const response = await fetch("/api/products");
+        const data = await response.json();
+        setProducts(data);
       } catch (error) {
-        console.error("Error fetching products:", error)
+        console.error("Error fetching products:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProducts()
-  }, [])
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     // Count active filters
-    let count = 0
-    if (filter.capacity) count++
-    if (filter.material) count++
-    if (filter.color) count++
-    if (filter.priceRange) count++
-    setActiveFiltersCount(count)
-  }, [filter])
+    let count = 0;
+    if (filter.capacity) count++;
+    if (filter.material) count++;
+    if (filter.color) count++;
+    if (filter.priceRange) count++;
+    setActiveFiltersCount(count);
+  }, [filter]);
 
   const toggleWishlist = useCallback((productId: string) => {
-    setWishlist((prev) => (prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]))
-  }, [])
+    setWishlist((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
+  }, []);
 
   const clearFilters = () => {
     setFilter({
@@ -69,70 +82,73 @@ export default function ProductsPage() {
       material: "",
       color: "",
       priceRange: "",
-    })
-  }
+    });
+  };
 
   const getPriceRange = (range: string) => {
     switch (range) {
       case "under50":
-        return { min: 0, max: 50 }
+        return { min: 0, max: 50 };
       case "50to100":
-        return { min: 50, max: 100 }
+        return { min: 50, max: 100 };
       case "100to200":
-        return { min: 100, max: 200 }
+        return { min: 100, max: 200 };
       case "over200":
-        return { min: 200, max: Number.POSITIVE_INFINITY }
+        return { min: 200, max: Number.POSITIVE_INFINITY };
       default:
-        return { min: 0, max: Number.POSITIVE_INFINITY }
+        return { min: 0, max: Number.POSITIVE_INFINITY };
     }
-  }
+  };
 
   const filteredProducts = products
     .filter((product) => {
       // Search term filter
-      if (searchTerm && !product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-        return false
+      if (
+        searchTerm &&
+        !product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return false;
       }
 
       // Capacity filter
       if (filter.capacity && product.capacity !== Number(filter.capacity)) {
-        return false
+        return false;
       }
 
       // Material filter
       if (filter.material && product.material !== filter.material) {
-        return false
+        return false;
       }
 
       // Color filter
       if (filter.color && product.color !== filter.color) {
-        return false
+        return false;
       }
 
       // Price range filter
       if (filter.priceRange) {
-        const { min, max } = getPriceRange(filter.priceRange)
+        const { min, max } = getPriceRange(filter.priceRange);
         if (product.price < min || product.price > max) {
-          return false
+          return false;
         }
       }
 
-      return true
+      return true;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case "price-asc":
-          return a.price - b.price
+          return a.price - b.price;
         case "price-desc":
-          return b.price - a.price
+          return b.price - a.price;
         case "name-asc":
-          return a.name.localeCompare(b.name)
+          return a.name.localeCompare(b.name);
         case "name-desc":
-          return b.name.localeCompare(a.name)
+          return b.name.localeCompare(a.name);
         default:
-          return 0 // Featured - no specific sort
+          return 0; // Featured - no specific sort
       }
-    })
+    });
 
   if (loading) {
     return (
@@ -142,7 +158,7 @@ export default function ProductsPage() {
           <p className="text-gray-600">Loading products...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -150,10 +166,17 @@ export default function ProductsPage() {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Premium Water Bottles</h1>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Premium Water Bottles
+            </h1>
             <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              Discover our collection of high-quality, eco-friendly water bottles designed for your active lifestyle
+              Discover our collection of high-quality, eco-friendly water
+              bottles designed for your active lifestyle
             </p>
           </motion.div>
         </div>
@@ -224,11 +247,15 @@ export default function ProductsPage() {
             >
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Capacity</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Capacity
+                  </label>
                   <select
                     className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     value={filter.capacity}
-                    onChange={(e) => setFilter({ ...filter, capacity: e.target.value })}
+                    onChange={(e) =>
+                      setFilter({ ...filter, capacity: e.target.value })
+                    }
                   >
                     <option value="">All Capacities</option>
                     <option value="500">500ml</option>
@@ -238,11 +265,15 @@ export default function ProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Material</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Material
+                  </label>
                   <select
                     className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     value={filter.material}
-                    onChange={(e) => setFilter({ ...filter, material: e.target.value })}
+                    onChange={(e) =>
+                      setFilter({ ...filter, material: e.target.value })
+                    }
                   >
                     <option value="">All Materials</option>
                     <option value="Stainless Steel">Stainless Steel</option>
@@ -252,11 +283,15 @@ export default function ProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Color
+                  </label>
                   <select
                     className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     value={filter.color}
-                    onChange={(e) => setFilter({ ...filter, color: e.target.value })}
+                    onChange={(e) =>
+                      setFilter({ ...filter, color: e.target.value })
+                    }
                   >
                     <option value="">All Colors</option>
                     <option value="Black">Black</option>
@@ -267,11 +302,15 @@ export default function ProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price Range</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Price Range
+                  </label>
                   <select
                     className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     value={filter.priceRange}
-                    onChange={(e) => setFilter({ ...filter, priceRange: e.target.value })}
+                    onChange={(e) =>
+                      setFilter({ ...filter, priceRange: e.target.value })
+                    }
                   >
                     <option value="">All Prices</option>
                     <option value="under50">Under $50</option>
@@ -283,7 +322,10 @@ export default function ProductsPage() {
               </div>
 
               <div className="flex justify-end mt-4">
-                <button onClick={clearFilters} className="text-sm text-gray-600 hover:text-blue-600 flex items-center">
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-gray-600 hover:text-blue-600 flex items-center"
+                >
                   <FaTimes className="mr-1" />
                   Clear Filters
                 </button>
@@ -348,15 +390,21 @@ export default function ProductsPage() {
         {/* Results Count */}
         <div className="text-sm text-gray-500 mb-6 flex items-center justify-between">
           <span>Showing {filteredProducts.length} products</span>
-          <span className="text-blue-600">{sortBy !== "featured" && `Sorted by: ${sortBy.replace("-", " ")}`}</span>
+          <span className="text-blue-600">
+            {sortBy !== "featured" && `Sorted by: ${sortBy.replace("-", " ")}`}
+          </span>
         </div>
 
         {/* Products Grid */}
         {filteredProducts.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-lg shadow-sm">
             <FaWater className="mx-auto h-16 w-16 text-blue-200" />
-            <h3 className="mt-4 text-lg font-medium text-gray-900">No products found</h3>
-            <p className="mt-1 text-sm text-gray-500">Try adjusting your filters or search criteria</p>
+            <h3 className="mt-4 text-lg font-medium text-gray-900">
+              No products found
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Try adjusting your filters or search criteria
+            </p>
             <button
               onClick={clearFilters}
               className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
@@ -374,26 +422,39 @@ export default function ProductsPage() {
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-md transition-shadow duration-300"
               >
-                <Link href={`/products/${product._id}`} className="block relative">
+                <Link
+                  href={`/products/${product._id}`}
+                  className="block relative"
+                >
                   <div className="relative h-64 bg-gray-100">
                     <Image
-                      src={product.images[0] || "/placeholder.svg"}
+                      src={
+                        product.images?.[0]
+                          ? `/api/images/${product.images[0]}`
+                          : "/placeholder.jpg"
+                      }
                       alt={product.name}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-contain group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        img.src = "/placeholder.jpg";
+                      }}
                     />
                     <div className="absolute top-2 right-2 space-y-2">
                       <button
                         className="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors"
                         onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          toggleWishlist(product._id)
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleWishlist(product._id);
                         }}
                       >
                         <FaHeart
                           className={`h-4 w-4 ${
-                            wishlist.includes(product._id) ? "text-red-500" : "text-gray-400 hover:text-red-500"
+                            wishlist.includes(product._id)
+                              ? "text-red-500"
+                              : "text-gray-400 hover:text-red-500"
                           }`}
                         />
                       </button>
@@ -412,13 +473,21 @@ export default function ProductsPage() {
                         <FaStar key={i} className="h-4 w-4" />
                       ))}
                     </div>
-                    <span className="ml-2 text-sm text-gray-500">(24 reviews)</span>
+                    <span className="ml-2 text-sm text-gray-500">
+                      (24 reviews)
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-500 mb-4 line-clamp-2">{product.description}</p>
+                  <p className="text-sm text-gray-500 mb-4 line-clamp-2">
+                    {product.description}
+                  </p>
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-lg font-bold text-gray-900">${product.price}</span>
-                      <span className="ml-2 text-sm text-gray-500">{product.capacity}ml</span>
+                      <span className="text-lg font-bold text-gray-900">
+                        ${product.price}
+                      </span>
+                      <span className="ml-2 text-sm text-gray-500">
+                        {product.capacity}ml
+                      </span>
                     </div>
                     <Link href={`/products/${product._id}`}>
                       <button className="p-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
@@ -440,5 +509,5 @@ export default function ProductsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
