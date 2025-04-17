@@ -6,7 +6,7 @@ import type { IProduct } from "@/models/Product";
 export async function GET() {
   try {
     await connectDB();
-    const products = await Product.find({ isActive: true }).exec();
+    const products = await Product.find({}).exec();
     return NextResponse.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
